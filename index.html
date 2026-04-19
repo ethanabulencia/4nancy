@@ -130,7 +130,8 @@ body { background: #fff; font-family: 'Palatino Linotype', serif; overflow-x: hi
   <div id="lyrics-display"></div>
 </div>
 
-<audio id="audio" loop>
+<!-- FIX 1: removed `loop` so the song doesn't repeat forever -->
+<audio id="audio">
   <source src="4nancy.mp3" type="audio/mpeg">
 </audio>
 
@@ -165,16 +166,18 @@ for (let i = 0; i < 20; i++) {
 }
 
 function startAudio() {
+  endTriggered = false;
   currentIndex = 0;
+  currentLineElem = null;
+  display.innerHTML = '';
   audio.currentTime = 0;
   audio.volume = 1;
-  display.innerHTML = '';
   audio.play();
-  
+
   playBtn.classList.remove('show');
   replayBtn.classList.remove('show');
   playScreen.style.opacity = "0";
-  
+
   setTimeout(() => {
     playScreen.style.display = "none";
   }, 1500);
@@ -194,7 +197,7 @@ const lyrics = [
   { time: 53, text: "It's so easy to fall in love with (Ethan Abulencia👀)" },
   { time: 58, text: "The way I do my hair, the way I make you laugh" },
   { time: 62, text: "The way we like to share a walk in Central Park" },
-  { time: 65, text: "I could be fresh air, might be the girl of your dreams" },
+  { time: 65, text: "I could be fresh air, might be the girl (or boy) of your dreams" },
   { time: 72, text: "There's no need to hide if you're into me" },
   { time: 75, text: "'Cause I'm into you quite intimately" },
   { time: 78, text: "And maybe one night could turn into three" },
@@ -218,22 +221,33 @@ const lyrics = [
 
 let currentIndex = 0;
 let currentLineElem = null;
+let endTriggered = false;
 
-// The restored end sequence logic
 function endSequence() {
-  playScreen.style.display = "flex";
-  setTimeout(() => {
-    playScreen.style.opacity = "1";
-    const fadeInterval = setInterval(() => {
-      if (audio.volume > 0.05) {
-        audio.volume -= 0.05;
-      } else {
-        audio.pause();
-        clearInterval(fadeInterval);
+  if (endTriggered) return;
+  endTriggered = true;
+
+  // FIX 2: fade out audio first, then show the white screen, THEN show the button
+  const fadeInterval = setInterval(() => {
+    if (audio.volume > 0.05) {
+      audio.volume -= 0.05;
+    } else {
+      audio.pause();
+      audio.volume = 0;
+      clearInterval(fadeInterval);
+
+      // Now bring up the white overlay
+      playScreen.style.display = "flex";
+      // Force a reflow so the transition fires
+      playScreen.getBoundingClientRect();
+      playScreen.style.opacity = "1";
+
+      // Wait for the overlay to fully fade in, THEN show the replay button
+      setTimeout(() => {
         replayBtn.classList.add('show');
-      }
-    }, 150);
-  }, 100);
+      }, 1600); // slightly longer than the 1.5s CSS transition
+    }
+  }, 150);
 }
 
 audio.addEventListener("timeupdate", () => {
@@ -257,7 +271,6 @@ audio.addEventListener("timeupdate", () => {
 
     currentLineElem = newLine;
     
-    // RESTORED: Check for the last lyric to end the experience
     if (currentIndex === lyrics.length - 1) {
       setTimeout(endSequence, 5000); 
     }
@@ -265,10 +278,9 @@ audio.addEventListener("timeupdate", () => {
     currentIndex++;
   }
 });
-</script>
 
-</body>
-</html>
+
+</script>
 
 </body>
 </html>
