@@ -194,7 +194,7 @@ const lyrics = [
   { time: 53, text: "It's so easy to fall in love with (Ethan Abulencia👀)" },
   { time: 58, text: "The way I do my hair, the way I make you laugh" },
   { time: 62, text: "The way we like to share a walk in Central Park" },
-  { time: 65, text: "I could be fresh air, might be the girl of your dreams" },
+  { time: 65, text: "I could be fresh air, might be the girl of your dreams (dream, dream)" },
   { time: 72, text: "There's no need to hide if you're into me" },
   { time: 75, text: "'Cause I'm into you quite intimately" },
   { time: 78, text: "And maybe one night could turn into three" },
@@ -203,11 +203,12 @@ const lyrics = [
   { time: 90, text: "So come, give me a call, and we'll fall into us" },
   { time: 97, text: "I'm the perfect mix of Saturday night and the rest of your life" },
   { time: 102, text: "Anyone with a heart would agree" },
-  { time: 106, text: "It's so easy to fall in love with me" },
+  { time: 106, text: "It's so easy to fall in love with me (me, me)" },
   { time: 116, text: "Me, me, me, me, me, me" },
-  { time: 124, text: "It's so easy" },
-  { time: 128, text: "It's so easy" },
-  { time: 132, text: "It's so easy" },
+  { time: 124, text: "It's so easy (me, me)" },
+  { time: 128, text: "It's so easy (me, me)" },
+  { time: 132, text: "It's so easy (me, me)" },
+  { time: 134, text: "Hey-hey (me, me)" },
   { time: 137, text: "It's so easy to fall in love" },
   { time: 143, text: "So come, give me a call, and we'll fall into us" },
   { time: 150, text: "I'm the perfect mix of Saturday night and the rest of your life" },
@@ -258,7 +259,7 @@ audio.addEventListener("timeupdate", () => {
     
     // RESTORED: Check for the last lyric to end the experience
     if (currentIndex === lyrics.length - 1) {
-      setTimeout(endSequence, 5000); 
+      setTimeout(endSequence, 10000); 
     }
 
     currentIndex++;
