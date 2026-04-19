@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>4nancy</title>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #fff; font-family: 'Palatino Linotype', serif; overflow-x: hidden; }
+
+/* Overlay for Start and End */
+.play-screen {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:white;
+  z-index:200;
+  transition: opacity 1.5s ease;
+}
+
+#intro-text {
+  font-size: 1.5rem;
+  color: #c2607a;
+  font-style: italic;
+  position: absolute;
+  transition: opacity 1s ease;
+}
+
+.play-button {
+  font-size:1.8rem;
+  padding:15px 35px;
+  border-radius:50px;
+  border:2px solid #e8c4cc;
+  background:#fff0f5;
+  color:#c2607a;
+  cursor:pointer;
+  transition: opacity 1s ease, transform 0.3s;
+  opacity: 0; 
+  pointer-events: none;
+  position: absolute;
+}
+
+.play-button.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.play-button:hover {
+  transform:scale(1.1);
+}
+
+/* Page Layout */
+.page { padding: 2rem 1.5rem 4rem; max-width: 700px; margin: 0 auto; }
+.title-section { text-align:center; padding:2rem 0; }
+.page-label { font-size:0.8rem; color:#d4849a; letter-spacing:0.2em; font-style:italic; }
+.song-title { font-size:2.2rem; color:#c2607a; font-style:italic; }
+.artist-name { font-size:1rem; color:#b8a0a8; font-style:italic; }
+
+.divider { display:flex; align-items:center; gap:10px; margin:1.5rem auto; max-width:250px; }
+.divider-line { flex:1; height:1px; background:#e8c4cc; }
+.divider-heart { color:#d4849a; }
+
+#lyrics-display {
+  text-align:center;
+  font-size:1.2rem;
+  font-style:italic;
+  line-height:1.6;
+  position: relative;
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+}
+
+.line {
+  position: absolute;
+  width: 100%;
+  opacity:0;
+  transform:translateY(15px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Petals */
+.petals-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+.petal { position:absolute; top:-40px; animation:fall linear infinite; }
+
+@keyframes fall {
+  0% { transform:translateY(-40px) rotate(0deg); opacity:0; }
+  10% { opacity:0.7; }
+  100% { transform:translateY(100vh) rotate(360deg); opacity:0; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="play-screen" id="playScreen">
+  <div id="intro-text">By Ethan ;)</div>
+  <button class="play-button" id="mainPlayBtn" onclick="startAudio()">▶ play</button>
+  <button class="play-button" id="replayBtn" onclick="startAudio()">↺ replay</button>
+</div>
+
+<div class="petals-container" id="petals"></div>
+
+<div class="page">
+  <div class="title-section">
+    <div class="page-label">4nancy</div>
+    <div class="song-title">So Easy (To Fall in Love)</div>
+    <div class="artist-name">Olivia Dean</div>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-heart">♡</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div id="lyrics-display"></div>
+</div>
+
+<audio id="audio" loop>
+  <source src="4nancy.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const audio = document.getElementById("audio");
+const display = document.getElementById("lyrics-display");
+const playScreen = document.getElementById("playScreen");
+const intro = document.getElementById('intro-text');
+const playBtn = document.getElementById('mainPlayBtn');
+const replayBtn = document.getElementById('replayBtn');
+
+// Initial sequence
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    intro.style.opacity = '0';
+    setTimeout(() => {
+      intro.style.display = 'none';
+      playBtn.classList.add('show');
+    }, 1000);
+  }, 2000); 
+});
+
+// Petals
+const petals = document.getElementById("petals");
+for (let i = 0; i < 20; i++) {
+  const p = document.createElement("div");
+  p.className = "petal";
+  p.innerHTML = "🌸";
+  p.style.left = Math.random()*100 + "%";
+  p.style.animationDuration = (8 + Math.random()*8) + "s";
+  petals.appendChild(p);
+}
+
+function startAudio() {
+  // Reset everything for replay
+  currentIndex = 0;
+  audio.currentTime = 0;
+  audio.volume = 1;
+  display.innerHTML = '';
+  
+  audio.play();
+  
+  // Hide UI
+  playBtn.classList.remove('show');
+  replayBtn.classList.remove('show');
+  playScreen.style.opacity = "0";
+  
+  setTimeout(() => {
+    playScreen.style.display = "none";
+  }, 1500);
+}
+
+const lyrics = [
+  { time: 5, text: "I could be the twist, the one to make you stop" },
+  { time: 8, text: "The icing on your cake, the cherry on the top" },
+  { time: 12, text: "It's heaven in my heart, and we could find you some space" },
+  { time: 19, text: "I could be the world to you, the missing piece 🧩" },
+  { time: 22, text: "That extra sentimental kind of chemistry" },
+  { time: 25, text: "Some people make it hard, with me, that isn't the case" },
+  { time: 30, text: "'Cause I make it so easy to fall in love" },
+  { time: 37, text: "So come, give me a call, and we'll fall into us" },
+  { time: 44, text: "I'm the perfect mix of Saturday night and the rest of your life" },
+  { time: 49, text: "Anyone with a heart would agree" },
+  { time: 53, text: "It's so easy to fall in love with (Ethan Abulencia👀)" },
+  { time: 58, text: "The way I do my hair, the way I make you laugh" },
+  { time: 62, text: "The way we like to share a walk in Central Park" },
+  { time: 65, text: "I could be fresh air, might be the girl of your dreams (dream, dream)" },
+  { time: 72, text: "There's no need to hide if you're into me" },
+  { time: 75, text: "'Cause I'm into you quite intimately" },
+  { time: 78, text: "And maybe one night could turn into three" },
+  { time: 82, text: "Well, I'm down to see" },
+  { time: 83, text: "'Cause I make it so easy to fall in love" },
+  { time: 90, text: "So come, give me a call, and we'll fall into us" },
+  { time: 97, text: "I'm the perfect mix of Saturday night and the rest of your life" },
+  { time: 102, text: "Anyone with a heart would agree" },
+  { time: 106, text: "It's so easy to fall in love with me (me, me)" },
+  { time: 116, text: "Me, me, me, me, me, me" },
+  { time: 124, text: "It's so easy (me, me)" },
+  { time: 128, text: "It's so easy (me, me)" },
+  { time: 132, text: "It's so easy (me, me)" },
+  { time: 137, text: "It's so easy to fall in love" },
+  { time: 143, text: "So come, give me a call, and we'll fall into us" },
+  { time: 150, text: "I'm the perfect mix of Saturday night and the rest of your life" },
+  { time: 155, text: "Anyone with a heart would agree" },
+  { time: 159, text: "It's so easy to fall in love with me 🩷" }
+];
+
+let currentIndex = 0;
+let currentLineElem = null;
+
+function endSequence() {
+  // Fade to white
+  playScreen.style.display = "flex";
+  setTimeout(() => {
+    playScreen.style.opacity = "1";
+    // Fade audio
+    const fadeInterval = setInterval(() => {
+      if (audio.volume > 0.05) {
+        audio.volume -= 0.05;
+      } else {
+        audio.pause();
+        clearInterval(fadeInterval);
+        // Show replay button
+        replayBtn.classList.add('show');
+      }
+    }, 150);
+  }, 100);
+}
+
+audio.addEventListener("timeupdate", () => {
+  if (currentIndex < lyrics.length && audio.currentTime >= lyrics[currentIndex].time) {
+    if (currentLineElem) {
+      const oldLine = currentLineElem;
+      oldLine.style.opacity = 0;
+      oldLine.style.transform = "translateY(-15px)";
+      setTimeout(() => { oldLine.remove(); }, 800);
+    }
+
+    const newLine = document.createElement("div");
+    newLine.className = "line";
+    newLine.textContent = lyrics[currentIndex].text;
+    display.appendChild(newLine);
+
+    setTimeout(() => {
+      newLine.style.opacity = 1;
+      newLine.style.transform = "translateY(0)";
+    }, 50);
+
+    currentLineElem = newLine;
+    
+    // Check if last lyric was just shown
+    if (currentIndex === lyrics.length - 1) {
+      setTimeout(endSequence, 10000); // 5 seconds of final lyric before fade
+    }
+
+    currentIndex++;
+  }
+});
+</script>
+
+</body>
+</html>
