@@ -25,7 +25,7 @@ body { background: #fff; font-family: 'Palatino Linotype', serif; overflow-x: hi
 }
 
 #intro-text {
-  font-size: 1.8rem; /* Slightly bigger intro */
+  font-size: 1.8rem;
   color: #c2607a;
   font-style: italic;
   position: absolute;
@@ -67,28 +67,29 @@ body { background: #fff; font-family: 'Palatino Linotype', serif; overflow-x: hi
 .divider-line { flex:1; height:1px; background:#e8c4cc; }
 .divider-heart { color:#d4849a; }
 
-/* FIX: Lyric Container for Mobile */
+/* FIXED HEIGHT CONTAINER: Prevents the page from jumping */
 #lyrics-display {
   text-align:center;
-  font-size: 1.5rem; /* BIGGER text for mobile visibility */
+  font-size: 1.6rem; 
   font-style:italic;
-  line-height:1.4;
   position: relative;
-  min-height: 150px; /* Taller area so lyrics have room to breathe */
-  margin-top: 20px;
+  height: 160px; /* Locked height to handle 1-3 lines of text */
+  margin: 20px auto;
+  width: 100%;
+  overflow: visible;
 }
 
-/* FIX: Positioning to prevent jumping */
+/* ABSOLUTE CENTERING: Ensures lyrics stay in the dead center of the box */
 .line {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
   width: 100%;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) translateY(15px); /* Start centered but slightly lower */
   opacity:0;
-  transform:translateY(15px);
   transition: opacity 0.8s ease, transform 0.8s ease;
-  padding: 0 10px; /* Keeps text away from screen edges */
+  padding: 0 15px;
+  pointer-events: none;
 }
 
 /* Petals */
@@ -238,7 +239,8 @@ audio.addEventListener("timeupdate", () => {
     if (currentLineElem) {
       const oldLine = currentLineElem;
       oldLine.style.opacity = 0;
-      oldLine.style.transform = "translateY(-15px)";
+      // Fade out upwards
+      oldLine.style.transform = "translateY(-50%) translateY(-15px)";
       setTimeout(() => { oldLine.remove(); }, 800);
     }
 
@@ -249,7 +251,8 @@ audio.addEventListener("timeupdate", () => {
 
     setTimeout(() => {
       newLine.style.opacity = 1;
-      newLine.style.transform = "translateY(0)";
+      // Fade into the dead center
+      newLine.style.transform = "translateY(-50%)";
     }, 50);
 
     currentLineElem = newLine;
