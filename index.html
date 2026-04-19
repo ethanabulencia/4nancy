@@ -67,25 +67,25 @@ body { background: #fff; font-family: 'Palatino Linotype', serif; overflow-x: hi
 .divider-line { flex:1; height:1px; background:#e8c4cc; }
 .divider-heart { color:#d4849a; }
 
-/* FIXED HEIGHT CONTAINER: Prevents the page from jumping */
+/* Fixed container to prevent mobile jump */
 #lyrics-display {
   text-align:center;
   font-size: 1.6rem; 
   font-style:italic;
   position: relative;
-  height: 160px; /* Locked height to handle 1-3 lines of text */
+  height: 160px; 
   margin: 20px auto;
   width: 100%;
   overflow: visible;
 }
 
-/* ABSOLUTE CENTERING: Ensures lyrics stay in the dead center of the box */
+/* Centering logic */
 .line {
   position: absolute;
   width: 100%;
   left: 0;
   top: 50%;
-  transform: translateY(-50%) translateY(15px); /* Start centered but slightly lower */
+  transform: translateY(-50%) translateY(15px);
   opacity:0;
   transition: opacity 0.8s ease, transform 0.8s ease;
   padding: 0 15px;
@@ -218,6 +218,7 @@ const lyrics = [
 let currentIndex = 0;
 let currentLineElem = null;
 
+// The restored end sequence logic
 function endSequence() {
   playScreen.style.display = "flex";
   setTimeout(() => {
@@ -239,7 +240,6 @@ audio.addEventListener("timeupdate", () => {
     if (currentLineElem) {
       const oldLine = currentLineElem;
       oldLine.style.opacity = 0;
-      // Fade out upwards
       oldLine.style.transform = "translateY(-50%) translateY(-15px)";
       setTimeout(() => { oldLine.remove(); }, 800);
     }
@@ -251,12 +251,12 @@ audio.addEventListener("timeupdate", () => {
 
     setTimeout(() => {
       newLine.style.opacity = 1;
-      // Fade into the dead center
       newLine.style.transform = "translateY(-50%)";
     }, 50);
 
     currentLineElem = newLine;
     
+    // RESTORED: Check for the last lyric to end the experience
     if (currentIndex === lyrics.length - 1) {
       setTimeout(endSequence, 5000); 
     }
